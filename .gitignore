@@ -1,0 +1,5 @@
+# Terraform working directory
+.terraform/
+
+# macOS
+.DS_Store
