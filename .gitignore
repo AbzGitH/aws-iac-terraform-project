@@ -6,3 +6,7 @@
 
 # Draw.io backup files
 *.bkp
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
