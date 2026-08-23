@@ -10,3 +10,7 @@
 # Terraform state files
 *.tfstate
 *.tfstate.*
+
+# Terraform saved plan files may contain sensitive values
+tfplan
+*.tfplan

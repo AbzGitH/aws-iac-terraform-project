@@ -1,3 +1,5 @@
+# Networking
+
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -17,6 +19,7 @@ resource "aws_subnet" "public" {
     Name = "project2-public-subnet"
   }
 }
+
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
@@ -43,6 +46,8 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
+
+# EC2
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -97,5 +102,81 @@ resource "aws_security_group" "ec2" {
 
   tags = {
     Name = "project2-ec2-sg"
+  }
+}
+
+# RDS
+
+resource "aws_subnet" "database" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "eu-west-2b"
+
+  tags = {
+    Name = "project2-database-subnet"
+  }
+}
+
+resource "aws_db_subnet_group" "main" {
+  name = "project2-db-subnet-group"
+
+  subnet_ids = [
+    aws_subnet.public.id,
+    aws_subnet.database.id
+  ]
+
+  tags = {
+    Name = "project2-db-subnet-group"
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name        = "project2-rds-sg"
+  description = "Allow MySQL access from EC2"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "MySQL from EC2"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "project2-rds-sg"
+  }
+}
+
+resource "aws_db_instance" "main" {
+  identifier             = "project2-rds"
+  engine                 = "mysql"
+  instance_class         = "db.t3.micro"
+  allocated_storage      = 20
+  storage_type           = "gp3"
+
+  db_name                = "projectdb"
+  username               = "admin"
+  password               = var.db_password
+
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  vpc_security_group_ids = [aws_security_group.rds.id]
+
+  publicly_accessible    = false
+  multi_az               = false
+
+  backup_retention_period = 1
+  deletion_protection     = false
+  skip_final_snapshot     = true
+
+  tags = {
+    Name = "project2-rds"
   }
 }
