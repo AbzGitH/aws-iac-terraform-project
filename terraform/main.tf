@@ -156,7 +156,8 @@ resource "aws_security_group" "rds" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier             = "project2-rds"
+  identifier             = "project2-rds-v2"
+  apply_immediately      = true
   engine                 = "mysql"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
