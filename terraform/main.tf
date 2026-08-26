@@ -1,7 +1,7 @@
 # Networking
 
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
 
@@ -12,7 +12,7 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
 
   tags = {
@@ -69,10 +69,10 @@ resource "aws_key_pair" "project2" {
 }
 
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t3.micro"
-  key_name      = aws_key_pair.project2.key_name
-  subnet_id     = aws_subnet.public.id
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.project2.key_name
+  subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
   tags = {
@@ -109,7 +109,7 @@ resource "aws_security_group" "ec2" {
 
 resource "aws_subnet" "database" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
+  cidr_block        = var.database_subnet_a_cidr
   availability_zone = "eu-west-2b"
 
   tags = {
@@ -156,22 +156,22 @@ resource "aws_security_group" "rds" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier             = "project2-rds-v2"
-  apply_immediately      = true
-  engine                 = "mysql"
-  instance_class         = "db.t3.micro"
-  allocated_storage      = 20
-  storage_type           = "gp3"
+  identifier        = "project2-rds-v2"
+  apply_immediately = true
+  engine            = "mysql"
+  instance_class    = var.db_instance_class
+  allocated_storage = var.db_allocated_storage
+  storage_type      = "gp3"
 
-  db_name                = "projectdb"
-  username               = "admin"
-  password               = var.db_password
+  db_name  = var.db_name
+  username = var.db_username
+  password = var.db_password
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
 
-  publicly_accessible    = false
-  multi_az               = false
+  publicly_accessible = false
+  multi_az            = false
 
   backup_retention_period = 1
   deletion_protection     = false
