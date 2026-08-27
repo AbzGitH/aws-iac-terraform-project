@@ -90,7 +90,7 @@ resource "aws_security_group" "ec2" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["78.144.70.22/32"]
+    cidr_blocks = [var.ssh_allowed_cidr]
   }
 
   egress {
@@ -117,12 +117,22 @@ resource "aws_subnet" "database" {
   }
 }
 
+resource "aws_subnet" "database_b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.database_subnet_b_cidr
+  availability_zone = "eu-west-2a"
+
+  tags = {
+    Name = "project2-database-subnet-b"
+  }
+}
+
 resource "aws_db_subnet_group" "main" {
   name = "project2-db-subnet-group"
 
   subnet_ids = [
-    aws_subnet.public.id,
-    aws_subnet.database.id
+    aws_subnet.database.id,
+    aws_subnet.database_b.id
   ]
 
   tags = {

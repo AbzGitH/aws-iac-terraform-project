@@ -22,12 +22,28 @@ variable "database_subnet_a_cidr" {
   default     = "10.0.2.0/24"
 }
 
+# CIDR range used by database subnet B
+
+variable "database_subnet_b_cidr" {
+  description = "CIDR block for database subnet B"
+  type        = string
+  default     = "10.0.3.0/24"
+}
+
 # EC2 instance type used for the web server
 
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
   default     = "t3.micro"
+}
+
+# IP address allowed to SSH into EC2
+
+variable "ssh_allowed_cidr" {
+  description = "CIDR block allowed to SSH into EC2"
+  type        = string
+  default     = "78.144.70.22/32"
 }
 
 # RDS instance class used for the MySQL database
