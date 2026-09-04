@@ -6,21 +6,7 @@ Deploy a production-style AWS environment with Terraform using Infrastructure as
 
 ## Planned Architecture
 
-Internet
-│
-▼
-Virtual Private Cloud (VPC)
-│
-├── Public Subnet
-│ │
-│ ▼
-│ EC2 Web Server
-│
-└── Security Group
-│
-├── HTTP (80)
-├── HTTPS (443)
-└── SSH (22)
+![AWS Project 2 Architecture](project-architecture.png)
 
 ## Components
 
