@@ -85,3 +85,11 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+# Controls whether RDS changes are applied immediately
+
+variable "db_apply_immediately" {
+  description = "Whether RDS changes should be applied immediately"
+  type        = bool
+  default     = true
+}

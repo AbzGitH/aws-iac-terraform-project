@@ -1,3 +1,12 @@
+# Network module
+# Uses the reusable network configuration stored in modules/network.
+
+module "network" {
+  source = "./modules/network"
+
+  vpc_cidr           = var.vpc_cidr
+  public_subnet_cidr = var.public_subnet_cidr
+}
 
 # EC2
 
@@ -17,18 +26,6 @@ resource "aws_key_pair" "project2" {
 
   tags = {
     Name = "project2-ec2-key"
-  }
-}
-
-resource "aws_instance" "web" {
-  ami                    = "ami-0c0513a2cd4e8e89c"
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.project2.key_name
-  subnet_id              = module.network.public_subnet_id
-  vpc_security_group_ids = [aws_security_group.ec2.id]
-
-  tags = {
-    Name = "project2-ec2"
   }
 }
 
@@ -54,6 +51,18 @@ resource "aws_security_group" "ec2" {
 
   tags = {
     Name = "project2-ec2-sg"
+  }
+}
+
+resource "aws_instance" "web" {
+  ami                    = "ami-0c0513a2cd4e8e89c"
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.project2.key_name
+  subnet_id              = module.network.public_subnet_id
+  vpc_security_group_ids = [aws_security_group.ec2.id]
+
+  tags = {
+    Name = "project2-ec2"
   }
 }
 
@@ -119,7 +128,7 @@ resource "aws_security_group" "rds" {
 
 resource "aws_db_instance" "main" {
   identifier        = "project2-rds-v2"
-  apply_immediately = true
+  apply_immediately = var.db_apply_immediately
   engine            = "mysql"
   instance_class    = var.db_instance_class
   allocated_storage = var.db_allocated_storage
@@ -142,14 +151,4 @@ resource "aws_db_instance" "main" {
   tags = {
     Name = "project2-rds"
   }
-}
-
-# Network module
-# Uses the reusable network configuration stored in modules/network.
-
-module "network" {
-  source = "./modules/network"
-
-  vpc_cidr           = var.vpc_cidr
-  public_subnet_cidr = var.public_subnet_cidr
 }
