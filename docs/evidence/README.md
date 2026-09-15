@@ -87,3 +87,15 @@ AWS Console verification of the RDS DB subnet group spanning two Availability Zo
 ![AWS RDS security group](screenshots/aws-rds-security-group.png)
 
 AWS Console verification that MySQL access to RDS is restricted to the EC2 security group.
+
+---
+
+## Infrastructure Teardown
+
+### Cost-Conscious Resource Cleanup
+
+![Terraform infrastructure teardown](screenshots/terraform-infrastructure-destroy.png)
+
+After deployment, validation and evidence capture were completed, Terraform successfully destroyed all 13 managed AWS resources.
+
+This confirms controlled infrastructure teardown while avoiding unnecessary ongoing consumption of AWS credits.

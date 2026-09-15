@@ -143,3 +143,37 @@ This keeps source-controlled infrastructure configuration separate from secrets 
 ### Engineering Lesson
 
 Infrastructure as Code should define how credentials are consumed without embedding the credentials themselves. Separating secrets from source code reduces accidental exposure and provides a cleaner foundation for adopting dedicated secret-management services in production environments.
+
+---
+
+## Cost Management and Infrastructure Teardown
+
+### Engineering Decision
+
+After the infrastructure had been successfully deployed, validated and documented, the live AWS resources were intentionally destroyed using Terraform.
+
+The project infrastructure was no longer required to remain continuously deployed once the implementation, architecture, troubleshooting and deployment evidence had been captured.
+
+### Cost Management Rationale
+
+Running cloud infrastructure after a project has completed can continue consuming AWS credits and generate unnecessary cost, particularly for continuously provisioned services such as EC2 and RDS.
+
+The project therefore followed a cost-conscious infrastructure lifecycle:
+
+**Provision → Validate → Evidence → Destroy**
+
+This preserves the technical value of the project while avoiding unnecessary consumption of cloud resources after validation is complete.
+
+### Infrastructure Reproducibility
+
+Destroying the deployed AWS resources does not remove the infrastructure design.
+
+The Terraform configuration, reusable network module, environment-specific configuration and supporting documentation remain version controlled in the Git repository.
+
+Terraform can therefore provision a new instance of the infrastructure when required, with AWS assigning new resource identifiers and Terraform recording the resulting infrastructure in state.
+
+### Engineering Lesson
+
+Infrastructure as Code makes cloud environments reproducible rather than permanently dependent on a specific set of deployed resources.
+
+For temporary development and portfolio environments, intentionally removing infrastructure after testing and evidence capture is both a cost-management practice and a demonstration of the complete infrastructure lifecycle.

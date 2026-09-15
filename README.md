@@ -133,3 +133,15 @@ AWS-IaC-Terraform-Project/
 Infrastructure implementation and engineering documentation are complete.
 
 Final validation, production deployment review and infrastructure cleanup are performed as part of the project closeout process.
+
+---
+
+## Infrastructure Teardown and Cost Management
+
+After deployment, validation and evidence capture were completed, the live AWS infrastructure was intentionally destroyed using Terraform to prevent unnecessary ongoing cloud costs.
+
+![Terraform infrastructure teardown](docs/evidence/screenshots/terraform-infrastructure-destroy.png)
+
+Terraform successfully removed all 13 managed resources, demonstrating controlled infrastructure teardown as part of the project's Infrastructure as Code lifecycle.
+
+The Terraform configuration remains version controlled and can be used to provision the infrastructure again when required.
