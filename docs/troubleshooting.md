@@ -66,3 +66,27 @@ The resolved design uses:
 The troubleshooting process demonstrated the importance of isolating individual infrastructure layers rather than repeatedly changing resources without evidence.
 
 Testing the RDS private IP independently of DNS proved that the core network and database path was functional. Reviewing the architecture against the RDS subnet requirements then exposed the missing subnet configuration and allowed the underlying issue to be corrected rather than leaving the private-IP connection as a workaround.
+
+## Terraform Network Module Refactoring
+
+### Engineering Change
+
+The networking configuration was initially defined directly in the root Terraform configuration. As the project developed, the VPC, public subnet, Internet Gateway, route table and route table association were moved into a reusable `network` module.
+
+### Migration Risk
+
+Moving existing Terraform resources into a module changes their Terraform resource addresses. Without migrating the existing state, Terraform can interpret the refactor as instructions to destroy the original resources and create replacements inside the module.
+
+An initial plan exposed this risk by showing infrastructure destruction and recreation that was not intended.
+
+### Resolution
+
+The existing networking resources were migrated to their corresponding module addresses in Terraform state using `terraform state mv`.
+
+The Terraform plan was then reviewed again to confirm that the refactor no longer required unnecessary replacement of the existing networking infrastructure.
+
+### Engineering Lesson
+
+Terraform refactoring must account for both configuration and state. Moving code into a module does not automatically tell Terraform that the new module resources represent infrastructure it already manages.
+
+Reviewing the execution plan before applying changes prevented an unnecessary infrastructure rebuild and allowed the networking configuration to be modularised safely.
